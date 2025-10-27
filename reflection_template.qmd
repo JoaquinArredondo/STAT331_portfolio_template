@@ -470,6 +470,29 @@ interview_person <- left_join(x = person,
 ```{r}
 #| label: wd-5-inner-ex-1
 
+# Lab 5 - (Revision)
+# inner_join, means that both entries can't be N/A, they must match to be reserved.
+
+suspect_strict <- get_fit_now_check_in |>
+  filter(
+    check_in_date == ymd("2018-01-09")
+    ) |>
+  inner_join(get_fit_now_member, 
+             by = join_by(membership_id == id)) |>
+  inner_join(person, 
+             by = join_by(person_id == id)) |>
+  inner_join(drivers_license, 
+             by = join_by(license_id == id)) |>
+  filter(
+    str_starts(membership_id, "48Z"),
+    membership_status == "gold",
+    str_detect(plate_number, "H42W")
+  ) |>
+  select(person_id, name, membership_id, membership_status, plate_number) |>
+  distinct()
+
+suspect_strict
+
 ```
 
 -   `inner_join()` Example 2
@@ -477,6 +500,29 @@ interview_person <- left_join(x = person,
 ```{r}
 #| label: wd-5-inner-ex-2
 
+# Lab 5 - (Revision)
+# In this case, if we do a inner join it reserves the same thing we want/need.
+# inner joins are gauranteeing there are no people in our rows that contain missing data.
+
+main_suspect <- person |> 
+  inner_join(drivers_license,
+            by = join_by(license_id == id)) |>
+  inner_join(income,
+            by = join_by(ssn == ssn)) |>
+  inner_join(interview,
+            by = join_by(id == person_id)) |>
+  inner_join(facebook_event_checkin, 
+            by = join_by(id == person_id)) |>
+  filter(
+    hair_color == "red",
+    car_make == "Tesla",
+    car_model == "Model S",
+    gender == "female",
+    height %in% c(65, 66, 67),
+    event_name == "SQL Symphony Concert"
+  ) 
+
+main_suspect
 ```
 
 **WD-6: I can use filtering joins to filter rows from a dataframe.**
@@ -485,6 +531,15 @@ interview_person <- left_join(x = person,
 
 ```{r}
 #| label: wd-6-semi
+# Lab 5 confirming that our main suspect has 0 transcripts and needs to be further investigated or that our 
+# previous suspect was lying!
+
+interview |>
+  semi_join(main_suspect,
+            by = join_by(person_id == id)) |>
+  pull(transcript)
+
+
 
 ```
 
@@ -492,6 +547,12 @@ interview_person <- left_join(x = person,
 
 ```{r}
 #| label: wd-6-anti
+# Lab 5 ~ List of Suspects that didn't show up that time said from our main suspect.
+person |>
+  anti_join(facebook_event_checkin |> 
+               filter(event_name == "SQL Symphony Concert",
+                      year(date) == 2017, month(date) == 12),
+            by = join_by(id == person_id))
 
 ```
 
@@ -502,12 +563,79 @@ interview_person <- left_join(x = person,
 ```{r}
 #| label: wd-7-long
 
+# Lab 4 - Q7
+
+library(RColorBrewer)
+
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
 ```
 
 -   `pivot_wider()`
 
 ```{r}
 #| label: wd-7-wide
+# Lab 4 - Q5
+median_household_income <- ca_childcare |>
+  filter(study_year %in% c(2008, 2018)) |>
+  group_by(region, study_year) |>
+  summarise(
+    median_income = median(mhi_2018, na.rm = TRUE), 
+    .groups = "drop") |>
+  pivot_wider(
+    names_from = study_year,
+    values_from = median_income,
+    names_prefix = "median_income_"
+  ) |>
+  arrange(desc(median_income_2018))
+  median_household_income
+
+
 
 ```
 
