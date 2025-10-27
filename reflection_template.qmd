@@ -634,9 +634,6 @@ median_household_income <- ca_childcare |>
   ) |>
   arrange(desc(median_income_2018))
   median_household_income
-
-
-
 ```
 
 ## Reproducibility
@@ -645,11 +642,11 @@ median_household_income <- ca_childcare |>
 
 The following assignments satisfy the above criteria:
 
--   Example 1
--   Example 2
--   Example 3
--   Example 4
--   Example 5
+-   Lab 3
+-   Lab 4
+-   Challenge 4
+-   Lab 2
+-   Lab 2 Challenge
 
 **R-2: I can write well documented and tidy code.**
 
@@ -658,12 +655,82 @@ The following assignments satisfy the above criteria:
 ```{r}
 #| label: r-2-1
 
+# Lab 4 - Q7
+
+library(RColorBrewer)
+
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
 ```
 
 -   Example of **dplyr** pipeline
 
 ```{r}
 #| label: r-2-2
+# Lab 3 - Q5
+teacher_evals_clean <-
+  teacher_evals |>
+  select(course_id, teacher_id, question_no, no_participants, resp_share,
+         SET_score_avg, percent_failed_cur, academic_degree, seniority, gender) |>
+  rename(sex = gender) |>
+  filter(no_participants >= 10) |>
+  mutate(
+    across(c(course_id, teacher_id), as.character),
+    question_no        = as.integer(question_no),
+    academic_degree    = as.factor(academic_degree),
+    seniority          = as.integer(seniority),
+    sex                = as.factor(sex),
+    SET_score_avg      = as.numeric(SET_score_avg),
+    percent_failed_cur = as.numeric(percent_failed_cur),
+    resp_share         = as.numeric(resp_share),
+    no_participants    = as.integer(no_participants)
+  )
+  
 
 ```
 
@@ -698,6 +765,27 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-1-num
+# Lab 4 - Q8
+ca_childcare |>
+  ggplot(aes(x = mhi_2018, y = mc_infant)) +
+  geom_point(color = "orange", alpha = 0.6, size = 1.5) +   # orange + transparency
+  geom_smooth(method = "lm", color = "darkorange", se = FALSE, size = 0.8) +  # darker line
+  labs(
+    x = "Median household income (2018 dollars)",
+    y = "Weekly full-time median price (Infant, center-based)",
+    title = "Income vs. Infant Childcare Costs in California (2008–2018)"
+  ) +
+  theme(
+    aspect.ratio = 1,
+    axis.text.x = element_text(size = 5),
+    axis.text.y = element_text(size = 5),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 7),
+    plot.title = element_text(size = 8, face = "bold"),
+    panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+    panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+    panel.background = element_rect(fill = "white")
+  )
 
 ```
 
@@ -705,6 +793,25 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-num-cat
+# Lab 2 - Q8
+sex_cols <- c(F = "#6a3d9a", M = "#1f78b4")
+ggplot(data = surveys,
+       mapping = aes(x = sex, y = weight, color = sex)) +
+       geom_jitter(alpha = 0.2, color = "orange3") +
+       geom_boxplot(outlier.shape = NA) +
+       scale_color_manual(values = sex_cols) +
+       labs(
+        title = "Distribution of Rodent Weights by Species",
+        x = "Species",
+        y = NULL,
+        subtitle = "Weight (g)"
+      ) +
+       theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),  # rotate species labels
+        plot.title = element_text(face = "bold", color = "purple", size = 18),
+        panel.border = element_rect(color = "grey35", fill = NA, linewidth = 0.8)  # border
+      )
+     
 
 ```
 
@@ -712,6 +819,57 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-cat
+# Lab 4 - Q7
+library(RColorBrewer)
+
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
+      
 
 ```
 
@@ -719,6 +877,58 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-date
+# Lab 4 - Q7
+
+library(RColorBrewer)
+
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
+      
 
 ```
 
@@ -728,6 +938,26 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-ex-1
+# Challenge 2 - (Revised): added a facet to seperate data and make it look clearer side by side
+sex_cols <- c(F = "#6a3d9a", M = "#1f78b4")
+
+ggplot(surveys, aes(x = species, y = weight, color = sex)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.25, width = 0.15) +
+  scale_color_manual(values = sex_cols) +
+  labs(
+    title = "Distribution of Rodent Weights by Species",
+    subtitle = "Sex: <span style='color:#6a3d9a;'>Female (F)</span> and <span style='color:#1f78b4;'>Male (M)</span>",
+    x = "Species",
+    y = "Weight (g)"
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.subtitle = ggtext::element_markdown(),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) +  
+  facet_wrap(~ sex)
 
 ```
 
@@ -735,6 +965,30 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-ex-2
+# Lab 4 - Q8 (Revised) ~ changed line to be complementary color and more visable.
+ca_childcare |>
+  ggplot(aes(x = mhi_2018, y = mc_infant)) +
+  geom_point(color = "orange", alpha = 0.6, size = 1.5) +   # orange + transparency
+  geom_smooth(method = "lm", color = "darkturquoise", se = FALSE, size = 0.8) +  # darker line
+  labs(
+    x = "Median household income (2018 dollars)",
+    y = "Weekly full-time median price (Infant, center-based)",
+    title = "Income vs. Infant Childcare Costs in California (2008–2018)"
+  ) +
+  theme(
+    aspect.ratio = 1,
+    axis.text.x = element_text(size = 5),
+    axis.text.y = element_text(size = 5),
+    axis.title.x = element_text(size = 8),
+    axis.title.y = element_text(size = 7),
+    plot.title = element_text(size = 8, face = "bold"),
+    panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+    panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+    panel.background = element_rect(fill = "white")
+  )
+      
+
+
 
 ```
 
@@ -743,12 +997,69 @@ The following assignments satisfy the above criteria:
 ```{r}
 #| label: dvs-2-ex-3
 
+# Challenge 4 - Q4
+
+library(ggplot2)
+library(forcats)
+
+summary_table |>
+  mutate(region = fct_reorder(region, gap)) |>
+  ggplot(aes(x = region, 
+             y = gap,
+             color = fct_reorder(.f = region,
+                                 .x = gap))) +
+  geom_point(size = 1) +
+  coord_flip() +
+  facet_wrap(~age, ncol = 1) +
+  labs(
+    title = "Price Gap by Region and Age — California, 2018",
+    subtitle = "More Negative means Center-based care costs more | Gap = (Family − Center)",
+    x = NULL, 
+    y = "Weekly Price Gap ($)",
+    color = "California Regions"
+  ) +
+  theme_minimal(base_size = 11) + 
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 5),
+    axis.title.x = element_text(size = 8), 
+    plot.title = element_text(size = 10, face = "bold"),
+    plot.subtitle = element_text(size = 5, face = "italic"),
+    panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+    panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+    panel.background = element_rect(fill = "white"),
+    legend.position = "none"     
+  )
+
+
+
 ```
 
 -   I can modify the text in my plot to be more readable
 
 ```{r}
 #| label: dvs-2-ex-4
+# Challenge 2 - Hot ~ angeled the x-axis to be more readable 
+
+sex_cols <- c(F = "#6a3d9a", M = "#1f78b4")
+
+ggplot(surveys, aes(x = species, y = weight, color = sex)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(alpha = 0.25, width = 0.15) +
+  scale_color_manual(values = sex_cols) +
+  labs(
+    title = "Distribution of Rodent Weights by Species",
+    subtitle = "Sex: <span style='color:#6a3d9a;'>Female (F)</span> and <span style='color:#1f78b4;'>Male (M)</span>",
+    x = "Species",
+    y = "Weight (g)"
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    plot.subtitle = ggtext::element_markdown(),
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) +  
+  facet_wrap(~ sex)
 
 ```
 
@@ -756,6 +1067,54 @@ The following assignments satisfy the above criteria:
 
 ```{r}
 #| label: dvs-2-ex-5
+# Lab 4 - Q7
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
 
 ```
 
@@ -766,6 +1125,55 @@ The following assignments satisfy the above criteria:
 ```{r}
 #| label: dvs-3-1-ex-1
 
+# Lab 4 - Q7
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
+
 ```
 
 -   I can use non-standard colors (Example 2)
@@ -773,12 +1181,46 @@ The following assignments satisfy the above criteria:
 ```{r}
 #| label: dvs-3-1-ex-2
 
+# Challenge 4 - Q4
+
+summary_table |>
+  mutate(region = fct_reorder(region, gap)) |>
+  ggplot(aes(x = region, 
+             y = gap,
+             color = fct_reorder(.f = region,
+                                 .x = gap))) +
+  geom_point(size = 1) +
+  coord_flip() +
+  facet_wrap(~age, ncol = 1) +
+  labs(
+    title = "Price Gap by Region and Age — California, 2018",
+    subtitle = "More Negative means Center-based care costs more | Gap = (Family − Center)",
+    x = NULL, 
+    y = "Weekly Price Gap ($)",
+    color = "California Regions"
+  ) +
+  theme_minimal(base_size = 11) + 
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 5),
+    axis.title.x = element_text(size = 8), 
+    plot.title = element_text(size = 10, face = "bold"),
+    plot.subtitle = element_text(size = 5, face = "italic"),
+    panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+    panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+    panel.background = element_rect(fill = "white"),
+    legend.position = "none"     
+  )
+
+
 ```
 
 -   I can use annotations (e.g., `geom_text()`)
 
 ```{r}
 #| label: dvs-3-2
+
+
 
 ```
 
