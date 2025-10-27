@@ -1389,6 +1389,26 @@ ca_childcare |>
 ```{r}
 #| label: dvs-6-ex-2
 
+# Lab 4 - Q5 (Revised) added kable() via course website to make tables nicer
+
+library(knitr)
+
+median_household_income <- ca_childcare |>
+  filter(study_year %in% c(2008, 2018)) |>
+  group_by(region, study_year) |>
+  summarise(
+    median_income = median(mhi_2018, na.rm = TRUE), 
+    .groups = "drop") |>
+  pivot_wider(
+    names_from = study_year,
+    values_from = median_income,
+    names_prefix = "median_income_"
+  ) |>
+  arrange(desc(median_income_2018)) |>
+  kable()
+
+  median_household_income
+
 ```
 
 -   I can arrange my table to have an intuitive ordering
