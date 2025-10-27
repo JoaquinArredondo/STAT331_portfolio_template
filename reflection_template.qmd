@@ -51,7 +51,7 @@ ages_xlsx <- read_excel("Ages_Data/ages.xlsx")
 
 ```{r}
 #| label: wd-2-ex-1
-
+# Lab 3 - Q5
 teacher_evals_clean <-
   teacher_evals |>
   filter(no_participants >= 10) |>
@@ -1818,14 +1818,22 @@ t.test(len ~ supp, data = ToothGrowth,
 
 <!-- How did you revise your thinking throughout the course? How did you revise your thinking on the code examples you have provided in your portfolio? -->
 
+Coming into this course as a 4th year computer science student, I have taken a handle of similar classes like Databases and Theory of Computation so a lot of these ideas, functions and libraries that we are learning are just a means to what I already know! But something these classes didn't teach me was how to visualize, clean-up and go into these type of spaces with storytelling in mind. So every time I am approached with an assignment question, I always ask myself: What is the table going to look like? What do I need? What do I ultimately want? and What tools do I know I can use to help me? When revising some code snippets, I realized there were more intuitive, easier approaches to curtain problems and I didn't choose the naive approach and challenged my way of thinking I would have set myself up later on to demonstrate these learn objectives.
+
 <!-- For the revisions included in your Portfolio, to help me understand the nature of your revisions, please denote somehow the feedback I provided you (e.g., boldface, italics, colored text) before your revisions. -->
 
 ## Extending My Thinking
 
 <!-- How did you extended your thinking throughout the course? How did you extend your thinking on the code examples you have provided in your portfolio? -->
 
+I think I extended my thinking throughout the course so far by proactively trying to be a "lazy coder", this is a idea that was taught to me in my other classes and it is centered around efficiency and optimization. What can I do to make my life easier as a programmer? That's why I really value the feedback I get back on my labs and challenges because most of the time, its an opportunity to learn and do things better. The first iteration/approach will never be the best, and that's why being in a environment where I can collabroate, learn and get feedback has really extend my learning. When approaching this portfolio, I wanted to show ways in which I demonstrated curtain criteria, at some points, I couldn't really find any examples to demonstrate, so I revised some code to not just meet it but also to improve it! Navigating this portfolio really helped me fill in the weak spots and solidify the availability of tools and how to use them.
+
 ## Peer Support & Collaboration
 
 <!-- Include an image or a description of feedback you gave that you are proud of (either in a peer review or in Discord). -->
 
+![Collaborating on Discord for assignment 3](images/Screenshot 2025-10-26 at 8.20.49 PM.png)
+
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
+
+I think these weekly pair programming activities are so important. Collaboration doesn't just connect people, but it also challenges you to listen and bring back humanity when you might feel lost and confused about curtain aspects of the class. I always find myself to be a patient and kind person, so these activities made me really think how I can help peers by effectively communicating and teaching not the most intuitive ideas.
