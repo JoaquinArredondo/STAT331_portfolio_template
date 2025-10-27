@@ -1332,7 +1332,55 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: dvs-6-ex-1
-
+library(RColorBrewer)
+# Lab 4 - Q7
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
 
 ```
 
@@ -1348,6 +1396,56 @@ median_household_income <- ca_childcare |>
 ```{r}
 #| label: dvs-6-ex-3
 
+
+# Lab 4 - Q7
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
+
 ```
 
 **DVS-7: I show creativity in my tables.**
@@ -1357,12 +1455,77 @@ median_household_income <- ca_childcare |>
 ```{r}
 #| label: dvs-7-ex-1
 
+
+# Lab 4 - Q7
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
+
 ```
 
 -   I can modify the layout of my table to be more readable (e.g., `pivot_longer()` or `pivot_wider()`)
 
 ```{r}
 #| label: dvs-7-ex-2
+# Lab 4 - Q5
+median_household_income <- ca_childcare |>
+  filter(study_year %in% c(2008, 2018)) |>
+  group_by(region, study_year) |>
+  summarise(
+    median_income = median(mhi_2018, na.rm = TRUE), 
+    .groups = "drop") |>
+  pivot_wider(
+    names_from = study_year,
+    values_from = median_income,
+    names_prefix = "median_income_"
+  ) |>
+  arrange(desc(median_income_2018))
+  median_household_income
+
 
 ```
 
@@ -1374,6 +1537,47 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: pe-1-one-call
+# Challenge 4 - Q3
+summary_table <- ca_childcare |>
+  filter(study_year == 2018) |>
+  select(region,
+         mc_infant, mc_toddler, mc_preschool,
+         mfcc_infant, mfcc_toddler, mfcc_preschool) |>
+  pivot_longer(
+    cols = c(mc_infant, mc_toddler, mc_preschool,
+             mfcc_infant, mfcc_toddler, mfcc_preschool),
+    names_to = c("setting","age"),
+    names_sep = "_", # kind-age-group _ is the delimiter
+    values_to = "price"
+  ) |>
+  # Change data to make it easier to work with
+  mutate(
+    setting = recode(setting, mc = "Center", mfcc = "Family"), #change mc and mfcc to be more readible
+    age = recode(age,
+                 infant = "Infant",
+                 toddler = "Toddler",
+                 preschool = "Preschool")
+  )|> group_by(region, age, setting) |>
+  summarise(
+    median_price = median(price, na.rm = TRUE), 
+    .groups = "drop"
+  ) |>
+  pivot_wider(
+    names_from = setting, 
+    values_from = median_price
+  ) |>
+  mutate(
+    gap = Family - Center
+  ) |>
+  arrange(age, 
+          desc(gap)
+  )
+
+summary_table |>   
+  group_by(age) |>
+  slice_min(order_by = gap, n = 3, with_ties = FALSE) |>
+  arrange(age, gap) |>
+  ungroup()
 
 ```
 
@@ -1381,6 +1585,20 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: pe-1-across
+# Lab 3 - Q5 (Revised) uses across to make value points into correct typing
+teacher_evals_clean <- teacher_evals |> 
+  rename(sex = gender) |>
+  filter(no_participants >= 10) |> 
+  select(course_id, teacher_id, question_no, no_participants, 
+         resp_share, SET_score_avg, percent_failed_cur, 
+         academic_degree, seniority, sex) |>
+  mutate(
+    across(.cols = course_id:teacher_id, .fns = as.character),
+    across(.cols = c(academic_degree, sex), .fns = as.factor),
+    across(.cols = c(question_no, seniority, no_participants), .fns = as.integer),
+    across(.cols = c(SET_score_avg, percent_failed_cur, resp_share), .fns = as.numeric)
+  )
+
 
 ```
 
@@ -1443,6 +1661,21 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: pe-4-1
+# Challenge 3 - Q1
+teacher_evals_compare <- teacher_evals |>
+  filter(question_no == 903) |>
+  mutate(
+    SET_level = case_when(
+      SET_score_avg >= 4 ~ "excellent",
+      TRUE               ~ "standard"
+    ),
+    sen_level = case_when(
+      seniority <= 4 ~ "junior",
+      seniority <= 8 ~ "senior",
+      TRUE           ~ "very senior"
+    )
+  ) |>
+  select(course_id, SET_level, sen_level)
 
 ```
 
@@ -1450,6 +1683,57 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: pe-4-2
+# Lab 4 - Q7
+library(RColorBrewer)
+
+ca_childcare |>
+     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
+               names_to = "age_group",
+               values_to = "median_age_group") |>
+     mutate(
+      age_group = fct_recode(age_group,
+        "Infant" = "mc_infant",
+        "Toddler" = "mc_toddler",
+        "Preschool" = "mc_preschool" ),
+      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
+     ggplot(mapping = 
+             aes(x = study_year, 
+                 y = median_age_group, 
+                 color = fct_reorder2(.f = region,
+                                      .x = study_year,
+                                      .y = median_age_group)
+                 )
+           ) +
+      geom_point(size = 0.8) +
+      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
+      facet_grid(~age_group) +
+      scale_color_manual(values = brewer.pal(10, "BrBG")) +
+      labs(#
+        x = "Study Year",
+        y = NULL, 
+        title = "Weekly Median Price for Centered-Based Childcare ($)",
+        color = "California Region"
+          ) +
+      scale_x_continuous(
+        limits = c(2008,2018),
+        breaks = seq(2008, 2018, 2)
+      ) +
+      theme(
+        aspect.ratio = 1,
+        axis.text.x = element_text(size = 5),
+        axis.text.y = element_text(size = 5),
+        axis.title.x = element_text(size = 8), 
+        plot.title = element_text(size = 10),
+        legend.text = element_text(size = 8),
+        legend.title = element_text(size = 10),
+        legend.key.size = unit(0.4, "cm"),  
+        legend.key.height = unit(0.4, "cm"),      
+        legend.key.width  = unit(0.4, "cm"),
+        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
+        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
+        panel.background = element_rect(fill = "white")
+      )
+      
 
 ```
 
@@ -1462,12 +1746,15 @@ median_household_income <- ca_childcare |>
 ```{r}
 #| label: dsm-1-1
 
+
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dsm-1-2
+
+
 
 ```
 
@@ -1477,6 +1764,11 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: dsm-2-1
+# Challenge 3 - Q3 
+chisq.test(
+  x = teacher_evals_compare$SET_level,
+  y = teacher_evals_compare$sen_level
+) 
 
 ```
 
@@ -1484,6 +1776,9 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: dsm-2-2
+# Lab 2 - Q17
+species_mod <- aov(weight ~ species, data = surveys)
+summary(species_mod)
 
 ```
 
@@ -1491,6 +1786,11 @@ median_household_income <- ca_childcare |>
 
 ```{r}
 #| label: dsm-2-3
+
+# Lab 1 - T Test Conclusion
+t.test(len ~ supp, data = ToothGrowth,
+       var.equal = FALSE,   # assume unequal variances
+       alternative = "two.sided")
 
 ```
 
