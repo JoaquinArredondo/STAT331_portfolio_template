@@ -1222,6 +1222,8 @@ summary_table |>
 
 
 
+
+
 ```
 
 -   I can choose creative geometries (e.g., `geom_segment()`, `geom_ribbon)()`)
@@ -1237,6 +1239,17 @@ summary_table |>
 
 ```{r}
 #| label: dvs-4-summarize
+# Lab 3 - Q7
+instructors <- teacher_evals_clean |>
+    select(teacher_id, academic_degree, seniority, sex) |>
+    distinct(teacher_id, .keep_all = TRUE) 
+instructors |>  count(academic_degree)
+instructors |>  
+  summarize(
+    avg_seniority = mean(seniority,  na.rm = TRUE),
+    n_male = sum(sex == "male"),
+    n_female = sum(sex == "female")
+  ) 
 
 ```
 
@@ -1244,6 +1257,27 @@ summary_table |>
 
 ```{r}
 #| label: dvs-4-across
+# Lab 3 - Q3 (Revised)
+
+instructors <- teacher_evals_clean |>
+    select(teacher_id, academic_degree, seniority, sex) |>
+    distinct(teacher_id, .keep_all = TRUE)
+
+instructors |>  count(academic_degree)
+
+instructors |>
+  summarise(
+    across(
+      .cols = c(seniority),
+      .fns =  c(min = min, 
+                max = max, 
+                mean = mean, 
+                median = median)
+    ),
+    n_male = sum(sex == "male"),
+    n_female = sum(sex == "female"),
+  )
+
 
 ```
 
@@ -1254,12 +1288,41 @@ summary_table |>
 ```{r}
 #| label: dvs-5-1
 
+# Lab 3 - Q12
+
+teacher_evals_clean |> 
+  filter(academic_degree %in% c("dr", "prof")) |>
+  group_by(teacher_id, seniority, sex) |>
+  summarise(
+    avg_eval_resp = mean(resp_share, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  filter(avg_eval_resp == max(avg_eval_resp) | avg_eval_resp == min(avg_eval_resp))
+
+
 ```
 
 -   Example 2
 
 ```{r}
 #| label: dvs-5-2
+
+# Lab 4 - Q5
+
+median_household_income <- ca_childcare |>
+  filter(study_year %in% c(2008, 2018)) |>
+  group_by(region, study_year) |>
+  summarise(
+    median_income = median(mhi_2018, na.rm = TRUE), 
+    .groups = "drop") |>
+  pivot_wider(
+    names_from = study_year,
+    values_from = median_income,
+    names_prefix = "median_income_"
+  ) |>
+  arrange(desc(median_income_2018))
+  median_household_income
+
 
 ```
 
@@ -1269,6 +1332,7 @@ summary_table |>
 
 ```{r}
 #| label: dvs-6-ex-1
+
 
 ```
 
