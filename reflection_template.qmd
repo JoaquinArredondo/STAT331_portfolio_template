@@ -391,6 +391,16 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: wd-4-date
+# Lab 5 - Mutating dates to be lubridate
+
+crime_scene_report <- crime_scene_report |>
+mutate(date = ymd(date))
+
+facebook_event_checkin <- facebook_event_checkin |>
+mutate(date = ymd(date))
+
+get_fit_now_check_in <- get_fit_now_check_in |>
+mutate(check_in_date = ymd(check_in_date))
 
 ```
 
@@ -400,6 +410,21 @@ ca_childcare <- ca_childcare |>
 
 ```{r}
 #| label: wd-5-left-ex-1
+# Lab 5 - Trying to find primary suspect by combining datasets
+get_fit_now_check_in |> 
+  filter(check_in_date == ymd("2018-01-09")) |>
+  left_join(get_fit_now_member,
+            by = join_by(membership_id == id)) |>
+  left_join(person,
+            by = join_by(person_id == id)) |>
+  left_join(drivers_license,
+            by = join_by(license_id == id)) |>
+  filter (
+    str_starts(membership_id, "48Z"),
+    membership_status == "gold",
+    str_detect(plate_number, "H42W")
+    ) 
+
 
 ```
 
@@ -408,12 +433,35 @@ ca_childcare <- ca_childcare |>
 ```{r}
 #| label: wd-5-right
 
+# Lab 5 - (Revised) for creating the database for interview x person
+interview_person <- right_join(x = person,
+                              y = interview,
+                              by = join_by(id == person_id)
+                    ) |>
+                    filter(!is.na(name) ) |>
+                    select(person_id,
+                           name,
+                           transcript)
+
+# Now that it is a right join, interview will be matched with person, but right database is reserved.
+# Not every interview will be guaranteed a person, so we must filter out N/A values for person/name.
+
+
+
 ```
 
 -   `left_join()` **or** `right_join()` Example 2
 
 ```{r}
 #| label: wd-5-left-right-ex-2
+
+# Lab 5 - combining person and interview, wanna keep list of people but I wanna attach interviews if they have it!
+# Example of left_join, but person is preserved. 
+
+interview_person <- left_join(x = person,
+                              y = interview,
+                              by = join_by(id == person_id)
+                    )
 
 ```
 
