@@ -6,12 +6,22 @@ editor: visual
 
 **Answer each of the following questions with *one sentence* including a brief explanation.**
 
-1.  Finish the sentence with another student’s name: "If \[Name of Student\] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.
+1.  Finish the sentence with another student’s name: "If \[Name of Student\] doesn’t earn an A, then nobody should, because..." Explain your choice and your reasoning.\
+    \
+    If Nick Carboni doesn't earn an A, then nobody should, because he is a hard-working computer science student who is passionate about research and data science. This class isn't just supporting his data science minor but also driving his passion for this class because he has worked hard not only in learning the content of the class but also collaborating and helping me out throughout this course.
 
-2.  What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.
+2.  What was the most difficult part of the class for you? List a general topic, a specific problem, a kind of work we did, etc. and explain why.\
+    \
+    I think the hardest thing for me to wrap my head around was pivoting data sets and use cases, eventually after seeing visuals it made sense but it took me a minute.
 
-3.  What was the easiest part of the class for you? Explain why.
+3.  What was the easiest part of the class for you? Explain why.\
+    \
+    I think the dplyr pipeline was the easiest for me since I took introduction to databases last year, so a lot of data manipulation was something I was used to.
 
-4.  What part of the class surprised or interested you the most? Explain why.
+4.  What part of the class surprised or interested you the most? Explain why.\
+    \
+    I think the data simulation was pretty cool, I specifically do video game development so simulating the real world is something that work on (for example particle systems)-- so seeing how it can be used and manipulated just gave me a lot of ideas. In addition, the data visualization was pretty fun, making things look nice and clean is always satisfying.
 
-5.  Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.
+5.  Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.\
+    \
+    Prioritize Labs and Challenges, and forsure make use of all the revisions opportunities to get feedback! \
