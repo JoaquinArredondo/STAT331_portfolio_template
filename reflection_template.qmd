@@ -2028,7 +2028,7 @@ I think I extended my thinking throughout the course so far by proactively tryin
 
 <!-- Include an image or a description of feedback you gave that you are proud of (either in a peer review or in Discord). -->
 
-![Collaborating on Discord for assignment 3](images/Screenshot%202025-10-26%20at%208.20.49%20PM.png)
+![*Collaborating on Discord for Assignment 3*](images/discord_message.png){fig-align="center"}
 
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
 

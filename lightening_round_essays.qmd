@@ -24,4 +24,4 @@ editor: visual
 
 5.  Give one piece of advice to a student just beginning a quarter of STAT 331 that will help them be successful in learning.\
     \
-    Prioritize Labs and Challenges, and forsure make use of all the revisions opportunities to get feedback! \
+    Prioritize Labs and Challenges, and forsure make use of all the revisions opportunities to get feedback!\
