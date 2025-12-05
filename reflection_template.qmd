@@ -216,17 +216,21 @@ get_fit_now_check_in |>
 
 ```{r}
 #| label: wd-4-numeric-ex-1
-# Lab 4 - Q10 ~ made q1_avg_rating
-teacher_evals_clean |> 
-  filter(question_no == 901) |>
-  group_by(teacher_id) |>
-  summarise(
-    n_courses = n_distinct(course_id),
-    q1_avg_rating = mean(SET_score_avg, na.rm = TRUE),
-    .groups = "drop"
+# Challenge 3 - Q1
+teacher_evals_compare <- teacher_evals |>
+  filter(question_no == 903) |>
+  mutate(
+    SET_level = case_when(
+      SET_score_avg >= 4 ~ "excellent",
+      TRUE               ~ "standard"
+    ),
+    sen_level = case_when(
+      seniority <= 4 ~ "junior",
+      seniority <= 8 ~ "senior",
+      TRUE           ~ "very senior"
+    )
   ) |>
-  filter (n_courses >= 5) |>
-  filter(q1_avg_rating == max(q1_avg_rating) | q1_avg_rating == min(q1_avg_rating))
+  select(course_id, SET_level, sen_level)
 
 ```
 
@@ -234,17 +238,20 @@ teacher_evals_clean |>
 
 ```{r}
 #| label: wd-4-numeric-ex-2
-# Lab 4 - Q12 ~ made avg_eval_resp
-teacher_evals_clean |> 
-  filter(academic_degree %in% c("dr", "prof")) |>
-  group_by(teacher_id, seniority, sex) |>
-  summarise(
-    avg_eval_resp = mean(resp_share, na.rm = TRUE),
-    .groups = "drop"
-  ) |>
-  filter(avg_eval_resp == max(avg_eval_resp) | avg_eval_resp == min(avg_eval_resp))
-
-
+# Lab 7 - Q12 ~ made avg_eval_resp
+fish_missing_summary <- fish |>
+  mutate(
+    any_missing = if_any(
+      .cols = everything(), 
+      .fns = ~ is.na(.x))
+    ) |>
+  summarise (
+    observations_na = sum(any_missing),
+    across(
+     .cols = everything(), 
+     .fns = ~ sum(is.na(.x)), 
+     .names = "na_{.col}")
+  )
 ```
 
 -   Factor Example 1 (renaming levels)
@@ -366,25 +373,26 @@ ca_childcare |>
 
 ```{r}
 #| label: wd-4-string
-# Lab 4, Q4 ~ str_remove
-ca_childcare <- ca_childcare |>
-  mutate(county_name = str_remove(county_name, " County")) |>
-  mutate(
-    region = fct_collapse(
-      county_name,
-      "Los Angeles" = la_county,
-      "Orange County" = orange_county,
-      "San Diego–Imperial" = san_diego_imperial_counties,
-      "Inland Empire" = inland_counties,
-      "Southern San Joaquin Valley" = s_san_joaquin_counties,
-      "Northern San Joaquin Valley" = n_san_joaquin_counties,
-      "Central Coast" = central_coast_counties,
-      "San Francisco Bay Area" = san_fran_counties,
-      "North Coast" = north_coast_counties,
-      "Superior California" = superior_counties
-    )
-)
+# Lab 5 - Crime Scene Inspection (Revised for Portfolio)
 
+gym_clue_stringr <- get_fit_now_member |>
+  mutate(
+    # Create a new character variable that extracts the first 3 letters of the ID
+    id_prefix = str_sub(id, 1, 3),
+
+    # Modify an existing character variable to clean formatting
+    membership_status_clean = str_to_title(membership_status)
+  ) |>
+  filter(
+    membership_status == "gold",
+    id_prefix == "48Z"
+  ) |>
+  left_join(person, join_by(person_id == id)) |>
+  left_join(drivers_license, join_by(license_id == id)) |>
+  filter(str_detect(plate_number, "H42W")) |>
+  select(id, person_id, membership_status_clean, id_prefix, plate_number)
+
+gym_clue_stringr
 ```
 
 -   Date (example must use functions from **lubridate**)
@@ -1832,7 +1840,7 @@ I think I extended my thinking throughout the course so far by proactively tryin
 
 <!-- Include an image or a description of feedback you gave that you are proud of (either in a peer review or in Discord). -->
 
-![Collaborating on Discord for assignment 3](images/Screenshot 2025-10-26 at 8.20.49 PM.png)
+![Collaborating on Discord for assignment 3](images/Screenshot%202025-10-26%20at%208.20.49%20PM.png)
 
 <!-- Include a description of how you grew as a collaborator through the weekly pair programming activities.   -->
 
