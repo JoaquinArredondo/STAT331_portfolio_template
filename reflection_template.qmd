@@ -432,8 +432,6 @@ get_fit_now_check_in |>
     membership_status == "gold",
     str_detect(plate_number, "H42W")
     ) 
-
-
 ```
 
 -   `right_join()` Example 1
@@ -555,12 +553,24 @@ interview |>
 
 ```{r}
 #| label: wd-6-anti
-# Lab 5 ~ List of Suspects that didn't show up that time said from our main suspect.
-person |>
-  anti_join(facebook_event_checkin |> 
-               filter(event_name == "SQL Symphony Concert",
-                      year(date) == 2017, month(date) == 12),
-            by = join_by(id == person_id))
+# Lab 5 ~ List of suspects who did NOT attend the SQL Symphony Concert in Dec 2017 (Revised for Portfolio)
+
+#  Everyone who did attend the concert in Dec 2017
+concert_dec17_attendees <- facebook_event_checkin |>
+  filter(
+    event_name == "SQL Symphony Concert",
+    year(date) == 2017,
+    month(date) == 12
+  )
+
+# People in-person who are NOT in that attendee list
+suspects_not_at_concert <- person |>
+  anti_join(
+    concert_dec17_attendees,
+    by = join_by(id == person_id)
+  )
+
+suspects_not_at_concert
 
 ```
 
@@ -746,6 +756,18 @@ teacher_evals_clean <-
 
 ```{r}
 #| label: r-2-3
+# Lab 7 - Q4
+rescale_01 <- function(x) {
+  if (!is.numeric(x)) {
+    stop("Input must be numeric.", call. = FALSE)
+  }
+  if (length(x) <= 1) {
+    stop("Input vector must have more than one value.", call. = FALSE)
+  }
+  
+  r <- range(x, na.rm = TRUE)
+  (x - r[1]) / diff(r)
+}
 
 ```
 
@@ -755,6 +777,17 @@ teacher_evals_clean <-
 
 ```{r}
 #| label: r-3-example
+# Lab 4 - Q6
+ca_childcare |> 
+  filter(study_year == 2018) |>
+  group_by(region, study_year) |>  
+  summarise(
+    med_2018_mc_i = median(mc_infant, na.rm = TRUE), 
+    .groups = "drop") |>   
+  slice_min(med_2018_mc_i)
+
+
+median_household_income |> slice_min(median_income_2018) 
 
 ```
 
@@ -762,6 +795,18 @@ teacher_evals_clean <-
 
 ```{r}
 #| label: r-3-function-stops
+# Lab 7 - Q4
+rescale_01 <- function(x) {
+  if (!is.numeric(x)) {
+    stop("Input must be numeric.", call. = FALSE)
+  }
+  if (length(x) <= 1) {
+    stop("Input vector must have more than one value.", call. = FALSE)
+  }
+  
+  r <- range(x, na.rm = TRUE)
+  (x - r[1]) / diff(r)
+}
 
 ```
 
@@ -801,25 +846,25 @@ ca_childcare |>
 
 ```{r}
 #| label: dvs-2-num-cat
-# Lab 2 - Q8
+# Lab 2 - Q8 (Revised for no tilt)
+
 sex_cols <- c(F = "#6a3d9a", M = "#1f78b4")
+
 ggplot(data = surveys,
-       mapping = aes(x = sex, y = weight, color = sex)) +
-       geom_jitter(alpha = 0.2, color = "orange3") +
-       geom_boxplot(outlier.shape = NA) +
-       scale_color_manual(values = sex_cols) +
-       labs(
-        title = "Distribution of Rodent Weights by Species",
-        x = "Species",
-        y = NULL,
-        subtitle = "Weight (g)"
-      ) +
-       theme(
-        axis.text.x = element_text(angle = 45, hjust = 1),  # rotate species labels
-        plot.title = element_text(face = "bold", color = "purple", size = 18),
-        panel.border = element_rect(color = "grey35", fill = NA, linewidth = 0.8)  # border
-      )
-     
+       mapping = aes(x = weight, y = sex, color = sex)) +
+  geom_jitter(alpha = 0.2, color = "orange3", height = 0.2) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_color_manual(values = sex_cols) +
+  labs(
+    title = "Distribution of Rodent Weights by Sex",
+    x = "Weight (g)",
+    y = "Sex",
+    subtitle = NULL
+  ) +
+  theme(
+    plot.title = element_text(face = "bold", color = "purple", size = 18),
+    panel.border = element_rect(color = "grey35", fill = NA, linewidth = 0.8)
+  )
 
 ```
 
@@ -827,58 +872,23 @@ ggplot(data = surveys,
 
 ```{r}
 #| label: dvs-2-cat
-# Lab 4 - Q7
-library(RColorBrewer)
-
-ca_childcare |>
-     pivot_longer(cols = c(mc_infant, mc_toddler, mc_preschool),
-               names_to = "age_group",
-               values_to = "median_age_group") |>
-     mutate(
-      age_group = fct_recode(age_group,
-        "Infant" = "mc_infant",
-        "Toddler" = "mc_toddler",
-        "Preschool" = "mc_preschool" ),
-      age_group = fct_relevel(age_group, "Infant", "Toddler", "Preschool")) |>
-     ggplot(mapping = 
-             aes(x = study_year, 
-                 y = median_age_group, 
-                 color = fct_reorder2(.f = region,
-                                      .x = study_year,
-                                      .y = median_age_group)
-                 )
-           ) +
-      geom_point(size = 0.8) +
-      geom_smooth(method = "loess", span = 0.9, size = 0.6) +
-      facet_grid(~age_group) +
-      scale_color_manual(values = brewer.pal(10, "BrBG")) +
-      labs(#
-        x = "Study Year",
-        y = NULL, 
-        title = "Weekly Median Price for Centered-Based Childcare ($)",
-        color = "California Region"
-          ) +
-      scale_x_continuous(
-        limits = c(2008,2018),
-        breaks = seq(2008, 2018, 2)
-      ) +
+# Challenge 3 - Q2
+ggplot(data = teacher_evals_compare, 
+       mapping = aes(x = sen_level, fill = SET_level)) +
+       geom_bar(position = "fill") +
+       labs(
+         title = "Evaluation of Teachers' Use of Activities",
+         x = "Years of Experience",
+         y = "Percentage",
+         fill = "Evaluation Rating"
+       ) +
+      scale_fill_manual(values = c("excellent" = "#B695D2", "standard" = "#B68758")) +
+      scale_y_continuous(labels = scales::percent) +
       theme(
-        aspect.ratio = 1,
-        axis.text.x = element_text(size = 5),
-        axis.text.y = element_text(size = 5),
-        axis.title.x = element_text(size = 8), 
-        plot.title = element_text(size = 10),
-        legend.text = element_text(size = 8),
-        legend.title = element_text(size = 10),
-        legend.key.size = unit(0.4, "cm"),  
-        legend.key.height = unit(0.4, "cm"),      
-        legend.key.width  = unit(0.4, "cm"),
-        panel.grid.major = element_line(color = "gray90", linewidth = 0.55),
-        panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
-        panel.background = element_rect(fill = "white")
-      )
-      
-
+        legend.position = "top",
+        plot.title = element_text(hjust = 0)
+      ) +
+      theme_bw()
 ```
 
 -   Dates (time series plot)
@@ -994,10 +1004,6 @@ ca_childcare |>
     panel.grid.minor = element_line(color = "gray90", linewidth = 0.2),
     panel.background = element_rect(fill = "white")
   )
-      
-
-
-
 ```
 
 -   I can modify my plot titles to clearly communicate the data context
@@ -1038,9 +1044,6 @@ summary_table |>
     panel.background = element_rect(fill = "white"),
     legend.position = "none"     
   )
-
-
-
 ```
 
 -   I can modify the text in my plot to be more readable
@@ -1068,7 +1071,6 @@ ggplot(surveys, aes(x = species, y = weight, color = sex)) +
     axis.text.x = element_text(angle = 45, hjust = 1)
   ) +  
   facet_wrap(~ sex)
-
 ```
 
 -   I can reorder my legend to align with the colors in my plot
